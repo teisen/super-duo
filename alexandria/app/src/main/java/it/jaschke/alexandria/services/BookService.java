@@ -2,8 +2,11 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -91,6 +94,22 @@ public class BookService extends IntentService {
 
         bookEntry.close();
 
+        /*
+        UX Feedback addressed:
+        1/2 of: Josh says: "This app is terrible. They say you can scan books, but that functionality isnt in the app yet.
+        It also crashed on me when I tried to add the book my sister was reading on the flight to London."
+
+        First, check if we have a connected network (either wifi or cell) and if one of them is connected.
+        Please note, that we do not know if we are actually connected to the internet, ths is just for a more
+        focused error message
+         */
+        if(isNetworkAvailable() == false) {
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.internet_not_connected_airplane));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            return;
+        }
+
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String bookJsonString = null;
@@ -130,6 +149,17 @@ public class BookService extends IntentService {
             bookJsonString = buffer.toString();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
+            /*
+            UX Feedback addressed:
+            1/2 of: Josh says: "This app is terrible. They say you can scan books, but that functionality isnt in the app yet.
+            It also crashed on me when I tried to add the book my sister was reading on the flight to London."
+            For the use case if we are not in airplane mode, but cannot connect to the api for some other reason,
+            for example captive portal.
+             */
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.internet_not_connected));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            return;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -195,9 +225,26 @@ public class BookService extends IntentService {
             if(bookInfo.has(CATEGORIES)){
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }
+            /**
+             * Need to notify user that the book was added
+             * Addresses UX issue
+             */
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.book_added));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
+            /**
+             * Need to notify user if the JSON parsing did not work
+             * Addresses UX issue:
+             * Hsiao-Lu says:
+             "The app could use some work. Sometimes when I add a book and dont double-check the ISBN, it just disappears!"
+             */
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.error_reading_json));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            return;
         }
     }
 
@@ -229,5 +276,15 @@ public class BookService extends IntentService {
             getContentResolver().insert(AlexandriaContract.CategoryEntry.CONTENT_URI, values);
             values= new ContentValues();
         }
+    }
+
+    /**
+     * Checks if the network connection is availible, note that it cannot check if internet is actually
+     * availible
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
  }

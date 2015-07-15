@@ -1,7 +1,6 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -35,13 +34,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
-    private static final String SCAN_FORMAT = "scanFormat";
-    private static final String SCAN_CONTENTS = "scanContents";
-
-    private String mScanFormat = "Format:";
-    private String mScanContents = "Contents:";
-
-
 
     public AddBook(){
     }
@@ -102,6 +94,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 //when you're done, remove the toast below.
                 //Context context = getActivity();
 
+                /*
+                UX Feedback addressed:
+                Lauren says: "I like this app generally, and the speed at which books come up on my
+                phone after I enter the ISBN is awesome. Im frustrated that the scanning functionality
+                isnt implemented yet. That would speed up the whole process and make the app way more
+                useful for me."
+                1st half of: Josh says: "This app is terrible. They say you can scan books, but that
+                functionality isnt in the app yet. It also crashed on me when I tried to add the book
+                my sister was reading on the flight to London."
+                 */
+
                 IntentIntegrator integrator = new IntentIntegrator(getActivity());
                 /* Cannot use the initiateScan method, as we need to call startActivityForResult and not
                  getActivity().startActivityForResult
@@ -118,6 +121,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void onClick(View view) {
                 ean.setText("");
+                /*
+                We could send the user back to the list of books after adding it. might address
+                UX review: The app could use some work. Sometimes when I add a book and dont
+                double-check the ISBN, it just disappears!
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                Fragment nextFragment = new ListOfBooks();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, nextFragment)
+                        .addToBackStack((String) getActivity().getTitle())
+                        .commit();
+                        */
             }
         });
 
@@ -168,7 +183,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if (!data.moveToFirst()) {
             return;
         }
-
+        Log.d(LOG_TAG, data.toString());
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
 
@@ -176,9 +191,24 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+
+        /**
+         * Some books searches do not return Authors. To handle this we check if authors is not null
+         *
+         */
+        String authorsText;
+        int nrOfAuthors;
+        if(authors != null) {
+            String[] authorsArr = authors.split(",");
+            authorsText = authors.replace(",","\n");
+            nrOfAuthors = authorsArr.length;
+        } else {
+            authorsText = "Unknown";
+            nrOfAuthors = 0;
+        }
+        ((TextView) rootView.findViewById(R.id.authors)).setLines(nrOfAuthors);
+        ((TextView) rootView.findViewById(R.id.authors)).setText(authorsText);
+
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
             new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
@@ -222,11 +252,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             if(scanResult.getFormatName().equals(Constants.EAN_13) ||  scanResult.getFormatName().equals(Constants.EAN_10)) {
                 ean.setText(re);
             } else {
-                // additional error handling in case user scans a wrong type of barcode.
-                Toast.makeText(getActivity(), getString(R.string.Error_wrong_barcode_type, scanResult.getFormatName()), Toast.LENGTH_LONG).show();
+                // additional / extra error handling in case user scans a wrong type of barcode.
+                Toast.makeText(getActivity(), getString(R.string.error_wrong_barcode_type, scanResult.getFormatName()), Toast.LENGTH_LONG).show();
             }
         }
         // else continue with any other code you need in the method
 
     }
+
 }

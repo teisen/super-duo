@@ -25,9 +25,12 @@
     <string name="back_button">go back</string>
     <string name="share_text">A must read book: </string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.
-    The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. </string>
+    The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. It was modified by Tobias Eisentraeger</string>
 
-    <string name="Error_wrong_barcode_type">Please scan the EAN 13 barcode, the scanned barcode was of type %1$s</string>
+    <string name="error_wrong_barcode_type">Please scan the EAN 13 barcode, the scanned barcode was of type %1$s</string>
+    <string name="internet_not_connected_airplane">An Internet connection is required for this function to work. Please make sure you are not in airplane mode.</string>
+    <string name="internet_not_connected">An Internet connection is required for this function to work. Please make sure you are connected to the Internet.</string>
+    <string name="error_reading_json">Error reading remote data.</string>
+    <string name="book_added">The Book has been added to the Database.</string>
 </resources>
