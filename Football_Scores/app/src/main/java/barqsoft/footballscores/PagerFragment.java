@@ -13,9 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by yehya khaled on 2/27/2015.
@@ -32,11 +30,9 @@ public class PagerFragment extends Fragment
         View rootView = inflater.inflate(R.layout.pager_fragment, container, false);
         mPagerHandler = (ViewPager) rootView.findViewById(R.id.pager);
         mPagerAdapter = new myPageAdapter(getChildFragmentManager());
-        //Date mockDate = new Date(2015,8,24);
-        Calendar mockDate = new GregorianCalendar(2015, 8, 24);
         for (int i = 0;i < NUM_PAGES;i++)
         {
-            Date fragmentdate = new Date(mockDate.getTime().getTime()+((i-2)*86400000));
+            Date fragmentdate = new Date(System.currentTimeMillis()+((i-2)*86400000));
             SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
             viewFragments[i] = new MainScreenFragment();
             viewFragments[i].setFragmentDate(mformat.format(fragmentdate));
