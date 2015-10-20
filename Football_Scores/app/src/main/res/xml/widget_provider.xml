@@ -9,6 +9,6 @@
     android:resizeMode="vertical|horizontal"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="keyguard|home_screen"
-    android:label="@string/todays_matches">
+    android:label="@string/all_matches">
 
 </appwidget-provider>

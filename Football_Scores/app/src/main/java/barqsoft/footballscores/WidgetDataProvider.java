@@ -102,7 +102,8 @@ public class WidgetDataProvider implements RemoteViewsFactory {
         Cursor cursor = null;
         try {
             cursor = new ScoresDBHelper(mContext).getReadableDatabase().query(
-                    DatabaseContract.SCORES_TABLE, null, DatabaseContract.scores_table.DATE_COL + " LIKE ?" , fragmentdate, null, null, null);
+                    //DatabaseContract.SCORES_TABLE, null, DatabaseContract.scores_table.DATE_COL + " LIKE ?" , fragmentdate, null, null, null);
+                    DatabaseContract.SCORES_TABLE, null, null , null, null, null, DatabaseContract.scores_table.DATE_COL + " DESC");
 
             int i = 0;
             cursor.moveToFirst();

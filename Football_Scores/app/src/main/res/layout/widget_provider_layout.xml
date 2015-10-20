@@ -52,7 +52,7 @@
                     android:id="@+id/txvWidgetTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/todays_matches"
+                    android:text="@string/all_matches"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="#4B4B4D" />
             </LinearLayout>
