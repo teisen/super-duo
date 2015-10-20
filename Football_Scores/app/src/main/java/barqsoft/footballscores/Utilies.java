@@ -61,7 +61,7 @@ public class Utilies
         }
         else
         {
-            return String.valueOf(home_goals) + " - " + String.valueOf(awaygoals);
+            return " " + String.valueOf(home_goals) + " - " + String.valueOf(awaygoals) + " ";
         }
     }
 

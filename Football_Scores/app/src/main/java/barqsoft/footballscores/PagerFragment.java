@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,7 +34,7 @@ public class PagerFragment extends Fragment
         for (int i = 0;i < NUM_PAGES;i++)
         {
             Date fragmentdate = new Date(System.currentTimeMillis()+((i-2)*86400000));
-            SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
             viewFragments[i] = new MainScreenFragment();
             viewFragments[i].setFragmentDate(mformat.format(fragmentdate));
         }
@@ -87,7 +88,7 @@ public class PagerFragment extends Fragment
                 Time time = new Time();
                 time.setToNow();
                 // Otherwise, the format is just the day of the week (e.g "Wednesday".
-                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
                 return dayFormat.format(dateInMillis);
             }
         }

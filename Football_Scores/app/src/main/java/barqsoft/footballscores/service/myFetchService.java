@@ -1,5 +1,6 @@
 package barqsoft.footballscores.service;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
@@ -30,7 +31,7 @@ import barqsoft.footballscores.R;
  */
 public class myFetchService extends IntentService
 {
-    public static final String LOG_TAG = "myFetchService";
+    private static final String LOG_TAG = "myFetchService";
     public myFetchService()
     {
         super("myFetchService");
@@ -41,8 +42,6 @@ public class myFetchService extends IntentService
     {
         getData("n2");
         getData("p2");
-
-        return;
     }
 
     private void getData (String timeFrame)
@@ -54,7 +53,7 @@ public class myFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
+        Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
         HttpURLConnection m_connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
@@ -209,11 +208,11 @@ public class myFetchService extends IntentService
                     mDate = match_data.getString(MATCH_DATE);
                     mTime = mDate.substring(mDate.indexOf("T") + 1, mDate.indexOf("Z"));
                     mDate = mDate.substring(0,mDate.indexOf("T"));
-                    SimpleDateFormat match_date = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat match_date = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
                     match_date.setTimeZone(TimeZone.getTimeZone("UTC"));
                     try {
                         Date parseddate = match_date.parse(mDate+mTime);
-                        SimpleDateFormat new_date = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
+                        @SuppressLint("SimpleDateFormat") SimpleDateFormat new_date = new SimpleDateFormat("yyyy-MM-dd:HH:mm");
                         new_date.setTimeZone(TimeZone.getDefault());
                         mDate = new_date.format(parseddate);
                         mTime = mDate.substring(mDate.indexOf(":") + 1);
@@ -222,7 +221,7 @@ public class myFetchService extends IntentService
                         if(!isReal){
                             //This if statement changes the dummy data's date to match our current date range.
                             Date fragmentdate = new Date(System.currentTimeMillis()+((i-2)*86400000));
-                            SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
                             mDate=mformat.format(fragmentdate);
                         }
                     }
@@ -248,13 +247,13 @@ public class myFetchService extends IntentService
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY,match_day);
                     //log spam
 
-                    //Log.v(LOG_TAG,match_id);
-                    //Log.v(LOG_TAG,mDate);
-                    //Log.v(LOG_TAG,mTime);
-                    //Log.v(LOG_TAG,Home);
-                    //Log.v(LOG_TAG,Away);
-                    //Log.v(LOG_TAG,Home_goals);
-                    //Log.v(LOG_TAG,Away_goals);
+//                    Log.v(LOG_TAG,match_id);
+//                    Log.v(LOG_TAG,mDate);
+//                    Log.v(LOG_TAG,mTime);
+//                    Log.v(LOG_TAG,Home);
+//                    Log.v(LOG_TAG,Away);
+//                    Log.v(LOG_TAG,Home_goals);
+//                    Log.v(LOG_TAG,Away_goals);
 
                     values.add(match_values);
                 }
@@ -265,7 +264,7 @@ public class myFetchService extends IntentService
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
