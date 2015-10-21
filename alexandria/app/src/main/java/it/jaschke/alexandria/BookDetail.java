@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,11 +28,13 @@ import it.jaschke.alexandria.services.DownloadImage;
 
 public class BookDetail extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String EXTRA_BOOKNAME = "EXTRA_BOOKNAME";
+    private final String LOG_TAG = BookDetail.class.getSimpleName();
     public static final String EAN_KEY = "EAN";
     private final int LOADER_ID = 10;
     private View rootView;
     private String ean;
-    private ShareActionProvider shareActionProvider;
+    private String bookTitle;
 
     public BookDetail(){
     }
@@ -45,7 +48,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        //Log.d(LOG_TAG, "onCreateView");
         Bundle arguments = getArguments();
         if (arguments != null) {
             ean = arguments.getString(BookDetail.EAN_KEY);
@@ -63,16 +66,40 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+
+
+        if(savedInstanceState == null) {
+            //Log.d(LOG_TAG, "savedInstanceState== " + savedInstanceState + " booktitle=" + bookTitle);
+        } else {
+            // restore object
+            bookTitle = savedInstanceState.getString(EXTRA_BOOKNAME);
+            //Log.d(LOG_TAG, "restored String... " + bookTitle);
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //Log.d(LOG_TAG, "Storing String... " + bookTitle);
+        outState.putString(EXTRA_BOOKNAME,bookTitle);
+        super.onSaveInstanceState(outState);
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.book_detail, menu);
-
+        //Log.d(LOG_TAG, "onCreateOptionsMenu");
         MenuItem menuItem = menu.findItem(R.id.action_share);
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + bookTitle);
+
+        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        shareActionProvider.setShareIntent(shareIntent);
     }
 
     @Override
@@ -93,15 +120,12 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         if (!data.moveToFirst()) {
             return;
         }
-
-        String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
+        //Log.d(LOG_TAG, "onLoadFinished");
+        bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.fullBookTitle)).setText(bookTitle);
 
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text)+ bookTitle);
-        shareActionProvider.setShareIntent(shareIntent);
+        // refresh the menu bar with the bookTitle
+        getActivity().invalidateOptionsMenu();
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
         ((TextView) rootView.findViewById(R.id.fullBookSubTitle)).setText(bookSubTitle);
