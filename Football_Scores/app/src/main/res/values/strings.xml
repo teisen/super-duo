@@ -36,4 +36,8 @@
     <string name="all_matches">All Matches</string>
     <string name="launcher_icon">Launcher Icon</string>
     <string name="team_crest">Crest</string>
+    <string name="hashtag">#Football_Scores</string>
+    <string name="not_known_league">Not known League Please report</string>
+    <string name="group_stages_matchday6">Group Stages, Matchday : 6</string>
+    <string name="match_day_">"Matchday : "</string>
 </resources>
