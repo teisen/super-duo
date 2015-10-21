@@ -25,7 +25,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v(LOG_TAG, "onReceive " );
+        // Log.v(LOG_TAG, "onReceive " );
         mContext = context;
         if (intent.getAction().equals(ACTION_UPDATE)) {
             Toast.makeText(mContext, "Updating Data...", Toast.LENGTH_LONG).show();
@@ -36,7 +36,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     private void update_scores()
     {
-        Log.v(LOG_TAG, "update_scores " + mContext );
+        // Log.v(LOG_TAG, "update_scores " + mContext );
         Intent service_start = new Intent(mContext, myFetchService.class);
         mContext.startService(service_start);
     }
@@ -45,7 +45,7 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
-        Log.v(LOG_TAG, "onUpdate ");
+        // Log.v(LOG_TAG, "onUpdate ");
         update_scores();
 
         for (int widgetId : appWidgetIds) {
@@ -71,7 +71,7 @@ public class WidgetProvider extends AppWidgetProvider {
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     private RemoteViews initViews(Context context, AppWidgetManager widgetManager, int widgetId) {
-        Log.v(LOG_TAG, "initViews(" + widgetId +")");
+        // Log.v(LOG_TAG, "initViews(" + widgetId +")");
         RemoteViews mView = new RemoteViews(context.getPackageName(),
                 R.layout.widget_provider_layout);
 

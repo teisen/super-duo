@@ -74,12 +74,12 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
-        Log.v(LOG_TAG, "loader finished");
+        // Log.v(LOG_TAG, "loader finished");
         //cursor.moveToFirst();
         /*
         while (!cursor.isAfterLast())
         {
-            Log.v(FetchScoreTask.LOG_TAG,cursor.getString(1));
+            // Log.v(FetchScoreTask.LOG_TAG,cursor.getString(1));
             cursor.moveToNext();
         }
         */
@@ -91,7 +91,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
             i++;
             cursor.moveToNext();
         }
-        Log.v(LOG_TAG,"Loader query: " + String.valueOf(i));
+        // Log.v(LOG_TAG,"Loader query: " + String.valueOf(i));
         mAdapter.swapCursor(cursor);
         //mAdapter.notifyDataSetChanged();
     }

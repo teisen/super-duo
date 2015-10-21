@@ -98,13 +98,13 @@ public class ScoresProvider extends ContentProvider
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Cursor retCursor;
-        Log.v(LOG_TAG,"1  "+uri.getPathSegments().toString());
+        // Log.v(LOG_TAG,"1  "+uri.getPathSegments().toString());
         int match = match_uri(uri);
-        if(projection !=null && projection.length > 0 ) Log.v(LOG_TAG,"2  "+projection[0]);
-        Log.v(LOG_TAG,"3  "+selection);
-        if(selectionArgs !=null && selectionArgs.length > 0 ) Log.v(LOG_TAG,"4  "+selectionArgs[0]);
-        Log.v(LOG_TAG,"5  "+sortOrder);
-        Log.v(LOG_TAG,"6c "+String.valueOf(match));
+        //if(projection !=null && projection.length > 0 ) // Log.v(LOG_TAG,"2  "+projection[0]);
+        // Log.v(LOG_TAG,"3  "+selection);
+        //if(selectionArgs !=null && selectionArgs.length > 0 ) // Log.v(LOG_TAG,"4  "+selectionArgs[0]);
+        // Log.v(LOG_TAG,"5  "+sortOrder);
+        // Log.v(LOG_TAG,"6c "+String.valueOf(match));
 
         switch (match)
         {
@@ -112,8 +112,8 @@ public class ScoresProvider extends ContentProvider
                     DatabaseContract.SCORES_TABLE,
                     projection,null,null,null,null,sortOrder); break;
             case MATCHES_WITH_DATE:
-                    if(selectionArgs.length>1) Log.v(LOG_TAG,selectionArgs[1]);
-                    if(selectionArgs.length>2) Log.v(LOG_TAG,selectionArgs[2]);
+                    //if(selectionArgs.length>1) // Log.v(LOG_TAG,selectionArgs[1]);
+                    //if(selectionArgs.length>2) // Log.v(LOG_TAG,selectionArgs[2]);
                     retCursor = mOpenHelper.getReadableDatabase().query(
                     DatabaseContract.SCORES_TABLE,
                     projection,SCORES_BY_DATE,selectionArgs,null,null,sortOrder); break;
@@ -140,7 +140,7 @@ public class ScoresProvider extends ContentProvider
     {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         //db.delete(DatabaseContract.SCORES_TABLE,null,null);
-        Log.v(LOG_TAG, String.valueOf(muriMatcher.match(uri)));
+        // Log.v(LOG_TAG, String.valueOf(muriMatcher.match(uri)));
         switch (match_uri(uri))
         {
             case MATCHES:

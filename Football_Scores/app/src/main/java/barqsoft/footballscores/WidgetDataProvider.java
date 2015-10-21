@@ -96,8 +96,8 @@ public class WidgetDataProvider implements RemoteViewsFactory {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
         fragmentdate[0] = mformat.format(fragmentd);
 
-        Log.v(LOG_TAG, "URI: " + uri.toString());
-        Log.v(LOG_TAG, "fragmentdate[0]: " + fragmentdate[0]);
+        // Log.v(LOG_TAG, "URI: " + uri.toString());
+        // Log.v(LOG_TAG, "fragmentdate[0]: " + fragmentdate[0]);
 
         Cursor cursor = null;
         try {
@@ -117,7 +117,7 @@ public class WidgetDataProvider implements RemoteViewsFactory {
                 //String matchdateUTC = cursor.getString(scoresAdapter.COL_DATE);
                 String matchtimeUTC = cursor.getString(scoresAdapter.COL_MATCHTIME);
 
-                Log.v(LOG_TAG, i + " " + homename + score + awayname + " @ " + matchtimeUTC);
+                // Log.v(LOG_TAG, i + " " + homename + score + awayname + " @ " + matchtimeUTC);
 
                 String displayString = homename + score + awayname ;
                 if(score.equalsIgnoreCase(" - ")) {
