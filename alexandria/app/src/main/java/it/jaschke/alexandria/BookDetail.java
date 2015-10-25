@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.view.MenuItemCompat;
@@ -43,6 +44,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        //getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -82,7 +84,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //Log.d(LOG_TAG, "Storing String... " + bookTitle);
-        outState.putString(EXTRA_BOOKNAME,bookTitle);
+        outState.putString(EXTRA_BOOKNAME, bookTitle);
         super.onSaveInstanceState(outState);
     }
 
@@ -158,10 +160,6 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
 
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
         ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
-
-        if(rootView.findViewById(R.id.right_container)!=null){
-            rootView.findViewById(R.id.backButton).setVisibility(View.INVISIBLE);
-        }
 
     }
 

@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +23,7 @@ import it.jaschke.alexandria.api.Callback;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
 
-    //private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -96,6 +97,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(title);
     }
 
@@ -115,17 +117,32 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //Log.d(LOG_TAG, "onOptionsItemSelected MainActivity");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                FragmentManager fm = getSupportFragmentManager();
 
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+                //Log.d(LOG_TAG, "BackStackEntryCount = " + fm.getBackStackEntryCount() + " Frag name= " + fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName());
+                String currentFragName = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+                if(currentFragName!= null && currentFragName.equals("Book Detail")) {
+                    //Log.d(LOG_TAG,"returning from BOOK DETAIL");
+                    fm.popBackStack();
+                    restoreActionBar();
+                    return true;
+                } else {
+                   //Log.d(LOG_TAG, "Book Detail Fragment does not exist, open menu");
+                    // do nothing
+                    return super.onOptionsItemSelected(item);
+                }
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -146,8 +163,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if(findViewById(R.id.right_container) != null){
             id = R.id.right_container;
         }
-        getSupportFragmentManager().beginTransaction()
+        int commit = getSupportFragmentManager().beginTransaction()
                 .replace(id, fragment)
+                        // Add this transaction to the back stack
                 .addToBackStack("Book Detail")
                 .commit();
 
